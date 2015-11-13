@@ -54,8 +54,8 @@
       <file leaf-file-name="BranchAndBound.h" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/BranchAndBound.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.9414802">
-              <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.2642487">
+              <caret line="9" column="20" selection-start-line="9" selection-start-column="20" selection-end-line="9" selection-end-column="20" />
               <folding>
                 <element signature="e#125#144#0" expanded="true" />
               </folding>
@@ -283,8 +283,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/BranchAndBound.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9414802">
-          <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.2642487">
+          <caret line="9" column="20" selection-start-line="9" selection-start-column="20" selection-end-line="9" selection-end-column="20" />
           <folding>
             <element signature="e#125#144#0" expanded="true" />
           </folding>
