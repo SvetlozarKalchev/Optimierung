@@ -73,20 +73,29 @@ void BranchAndBound::bound(Problem teilproblem) {
         currentAssignment[i] = teilproblem.assignment[i];
     }
     for(int j = teilproblem.count; j < n; j++) { //noch nicht festgelegt --> minimum
+        int *array = new int[n];
+        for(int i = 0; i < n; i++) { //i = Spalte
+            array[i] = matrix[i][j];
+            for(int x = 0; x < teilproblem.count; x++) if(currentAssignment[x]==i) array[i]=2147483647;
+        }
+
         // Spalte j durchlaufen und Minimum suchen
         int agentMin = 0;
-        for(int k = 0; k<n; k++) {
-            if(matrix[k][j]<matrix[agentMin][j]) agentMin=k;
+        for(int k = 1; k<n; k++) {
+            if(array[k]<array[agentMin]) agentMin=k;
         }
-        lowerBound +=matrix[agentMin][j];
+        lowerBound +=array[agentMin];
         currentAssignment[j]=agentMin;
     }
 
     //pruefen ob currentAssignment gueltige Loesung ist
     bool gueltigeLoesung = true;
-    for(int l=0; l<n; l++) {
+    for(int l=0; l<n-1; l++) {
         for(int m=l+1; m<n; m++) {
-            if(currentAssignment[l] == currentAssignment[m]) gueltigeLoesung == false;
+            if(currentAssignment[l] == currentAssignment[m]) {
+                gueltigeLoesung = false;
+                break;
+            }
         }
     }
 
@@ -96,7 +105,7 @@ void BranchAndBound::bound(Problem teilproblem) {
         minimalAssignment = currentAssignment;
     }
 
-        //keine gueltige Loesung
+    //keine gueltige Loesung
     else {
         liste.push_front(teilproblem);
     }
