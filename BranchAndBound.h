@@ -35,6 +35,7 @@ public:
 
     int* assignment(int n, int **kosten);
     BBlist branch(Problem problem);
+    bool is_solution_valid(int *current_assignment);
     void bound(Problem teilproblem);
     Problem minProblem();
     BranchAndBound::Problem* setProblem(int n);
@@ -99,7 +100,7 @@ BranchAndBound::BBlist BranchAndBound::branch(Problem problem)
             /* 4. Go through each row, e.g worker and assign a job */
             for(int agent = 0; agent < number_of_workers; agent++)
             {
-                problem.assignment[job] = matrixt[agent][job];
+                problem.assignment[job] = matrix[agent][job];
 
                 /* 5. Push problem variation to BBlist */
                 problem_list.push_front((const Problem&) problem);
@@ -111,6 +112,26 @@ BranchAndBound::BBlist BranchAndBound::branch(Problem problem)
     return problem_list;
 }
 
+bool BranchAndBound::is_solution_valid(int *current_assignment)
+{
+    bool is_valid = true;
+    int number_of_jobs = this->n;
+
+    /* Compare each value with assignment array with all other values to find if there are any duplicates */
+    for(int i = 0; i < number_of_jobs - 1; i++)
+    {
+        for(int j = i+1; j < number_of_jobs; j++)
+        {
+            if(current_assignment[i] == current_assignment[j])
+            {
+                is_valid = false;
+                break;
+            }
+        }
+    }
+
+    return is_valid;
+}
 /*
     Method that accepts a problem and calculates the sum of all costs.
 */
@@ -181,21 +202,10 @@ void BranchAndBound::bound(Problem sub_problem)
         Check if the current job assignment is a valid solution. Condition for that is each
         job must be given to a different worker.
     */
-    bool is_valid_solution = true;
-    for(int l = 0; l < n-1; l++)
-    {
-        for(int m = l+1; m < n; m++)
-        {
-            if(currentAssignment[l] == currentAssignment[m])
-            {
-                is_valid_solution = false;
-                break;
-            }
-        }
-    }
+    bool valid_solution = is_solution_valid(currentAssignment);
 
     //gueltige Loesung
-    if(lowerBound < u && is_valid_solution) {
+    if(lowerBound < u && valid_solution) {
         this->u = lowerBound;
         minimalAssignment = currentAssignment;
     }
