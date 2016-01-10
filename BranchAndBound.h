@@ -82,39 +82,32 @@ int* BranchAndBound::assignment(int n, int **kosten) {
 */
 BranchAndBound::BBlist BranchAndBound::branch(Problem problem)
 {
-    /*
-        1. Find out how many jobs need to be allocated
-        2. Start from the first empty worker/job position
-        3. Find lowest value for each job
-        4. Put the problem variation in the list
-        5. At the end, return the branch list.
-    */
     BranchAndBound::BBlist problem_list;
     int number_of_assignments = problem.count;
-    int workers = this->n;
+    int number_of_workers = this->n;
     int **matrix = this->matrix;
-    int job;
 
-    /* i = collumn */
-    for(int i = number_of_assignments; i < workers; i++)
+    /* 1. Only proceed if there are unassigned jobs*/
+    if(number_of_assignments != number_of_workers)
     {
-        /* Create a new problem object. Its assignment field is updated and the object is later put in the branch list. */
-        BranchAndBound::Problem sub_problem(this->n);
+        /* 2. Increment allocation counter in the problem, because we are allocating +1 job */
+        problem.count++;
 
-        /* Go over each row and get the lowest unassigned value. */
-        job = i;
-
-        for(int row = 0; row < workers; row++)
+        /* 3. Start from the unallocated job */
+        for(int job = number_of_assignments; job < number_of_assignments + 1; job++)
         {
-            /* TODO:
-                1. Add method to check if the current worker is already given a job.
-                2. Build a new branch from the possible values
-            */
-        }
+            /* 4. Go through each row, e.g worker and assign a job */
+            for(int agent = 0; agent < number_of_workers; agent++)
+            {
+                problem.assignment[job] = matrixt[agent][job];
 
-        problem_list.push_front((const Problem &)sub_problem);
+                /* 5. Push problem variation to BBlist */
+                problem_list.push_front((const Problem&) problem);
+            }
+        }
     }
 
+    /* 6. Return list with branches */
     return problem_list;
 }
 
