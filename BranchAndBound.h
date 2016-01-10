@@ -14,6 +14,24 @@ public:
         int count; //zaehlt wie viele Aufgaben schon vergeben wurden
         Problem(int n) : l{0}, assignment{new int[n]{}}, count{0} {}
         ~Problem() {delete[] assignment;}
+        Problem(const Problem& p) : l{p.l}, count{p.count}, assignment{new int[sizeof(p.assignment)]} { for(int i = 0; i < sizeof(p.assignment); i++) {
+                assignment[i] = p.assignment[i];
+            }; }
+        Problem& operator=(const Problem& p) {
+            int *newAssignment = new int[sizeof(p.assignment)];
+            for(int i = 0; i < sizeof(p.assignment); i++) {
+                newAssignment[i] = p.assignment[i];
+            }
+
+            //std::copy(assignment, assignment + sizeof(p.assignment), p.assignment);
+            delete[] assignment;
+            assignment = newAssignment;
+            l = p.l;
+            count = p.count;
+            return *this;
+        }
+
+
     };
 
 private:
@@ -24,12 +42,11 @@ private:
     int u; // Max range of int instead of infinity
     //Problem * min; //zeigt auf Problem mit kleinster Lower bound
     int * minimalAssignment;
-    Problem *s;
+    //Problem *s;
 
 public:
     /* Constructor and destructor*/
-    BranchAndBound() : u{2147483647}, liste{}, s {new Problem(n)}, minimalAssignment{new int[n]{}} {liste.push_front(
-                (const Problem &) s);}
+    BranchAndBound() : u{2147483647}, liste{} {}
     ~BranchAndBound() {  delete[] matrix;}
 
 
@@ -50,6 +67,8 @@ int* BranchAndBound::assignment(int n, int **kosten) {
     /* Assign number of workers and cost matrix to class variables */
     this->n = n;
     this->matrix=kosten;
+    liste.push_front(Problem(n));
+    minimalAssignment = new int[n]{};
 
     /*
         While the list contains problems:
@@ -100,10 +119,12 @@ BranchAndBound::BBlist BranchAndBound::branch(Problem problem)
             /* 4. Go through each row, e.g worker and assign a job */
             for(int agent = 0; agent < number_of_workers; agent++)
             {
-                problem.assignment[job] = matrix[agent][job];
+                problem.assignment[job] = agent; //agent statt matrix[agent][job]
 
                 /* 5. Push problem variation to BBlist */
-                problem_list.push_front((const Problem&) problem);
+                Problem neuesProblem = Problem(n);
+                neuesProblem = problem;
+                problem_list.push_front(neuesProblem);
             }
         }
     }
@@ -210,7 +231,7 @@ void BranchAndBound::bound(Problem sub_problem)
         minimalAssignment = currentAssignment;
     }
 
-    //keine gueltige Loesung
+        //keine gueltige Loesung
     else {
         liste.push_front(sub_problem);
     }
