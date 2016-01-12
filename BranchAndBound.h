@@ -12,9 +12,10 @@ private:
         int l; //lower bound
         int *assignment; //assigns tasks to agents
         int count; //counts how many tasks are already assigned
+        int n;
 
         /* Contstructor and destructor */
-        Problem(int n) : l{0}, assignment{new int[n]{}}, count{0} {}
+        Problem(int n) : l{0}, assignment{new int[n]{}}, count{0}, n{n} {}
         ~Problem() {delete[] assignment;}
         Problem(const Problem& p) : l{p.l}, count{p.count}, assignment{new int[sizeof(p.assignment)]} {
             for(int i = 0; i < sizeof(p.assignment); i++) {
@@ -78,17 +79,19 @@ int* BranchAndBound::assignment(int n, int **kosten) {
     {
         /* Get the problem with the minimal lower bound. Then remove it from the global problem list. */
         Problem problem = minProblem();
-        liste.pop_back();
+        liste.pop_front();
 
-        /* Get a list containing all permutations of the problem. */
-        BBlist sub_problem_list = branch(problem);
-
-        /* Calculate lower bound for each subproblem */
-        for(int i = 0; i < sub_problem_list.size(); i++)
-        {
-            Problem sub_problem = sub_problem_list.front();
-            bound(sub_problem);
-            sub_problem_list.pop_back();
+        if(problem.l<u) {
+            /* Get a list containing all permutations of the problem. */
+            BBlist sub_problem_list = branch(problem);
+            int size = sub_problem_list.size();
+            /* Calculate lower bound for each subproblem */
+            for(int i = 0; i < size; i++)
+            {
+                Problem sub_problem = sub_problem_list.front();
+                bound(sub_problem);
+                sub_problem_list.pop_front();
+            }
         }
     }
 
@@ -214,6 +217,8 @@ void BranchAndBound::bound(Problem sub_problem)
         lowerBound +=array[agentMin];
         currentAssignment[j]=agentMin;
     }
+    sub_problem.l=lowerBound;
+
 
     /*
         Check if the current job assignment is a valid solution. Condition for that is each
