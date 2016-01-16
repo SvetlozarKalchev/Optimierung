@@ -14,20 +14,26 @@ private:
         int count; //counts how many tasks are already assigned
         int n;
 
-        /* Contstructor and destructor */
+        /* Constructors and destructor */
         Problem(int n) : l{0}, assignment{new int[n]{}}, count{0}, n{n} {}
-        ~Problem() {delete[] assignment;}
-        Problem(const Problem& p) : l{p.l}, count{p.count}, assignment{new int[sizeof(p.assignment)]} {
-            for(int i = 0; i < sizeof(p.assignment); i++) {
+
+        /* When constructing a new branch, accept a root problem as a constructor and copy all its variables to the new problem */
+        Problem(const Problem& p) : l{p.l}, count{p.count}, assignment{new int[n]} {
+            for(int i = 0; i < p.count; i++) {
                 assignment[i] = p.assignment[i];
             }; }
 
+        ~Problem() {delete[] assignment;}
+
         /* = operator */
         Problem& operator=(const Problem& p) {
-            int *newAssignment = new int[sizeof(p.assignment)];
-            for(int i = 0; i < sizeof(p.assignment); i++) {
+            int *newAssignment = new int[n];
+
+            for(int i = 0; i < p.count; i++)
+            {
                 newAssignment[i] = p.assignment[i];
             }
+
             delete[] assignment;
             assignment = newAssignment;
             l = p.l;
@@ -39,9 +45,9 @@ private:
     typedef list<Problem> BBlist;
     BBlist liste; //list containing problems that need to be processed
     int n; //number of tasks, number of agents
-    int** matrix; //cost matrix
+    int **matrix; //cost matrix
     int u; // upper bound, max range of int instead of infinity
-    int * minimalAssignment;
+    int *minimalAssignment;
 
 public:
     /* Constructor and destructor*/
@@ -65,9 +71,10 @@ int* BranchAndBound::assignment(int n, int **kosten) {
     /* Assign number of workers and cost matrix to class variables */
     this->n = n;
     this->matrix=kosten;
+    /* Add an empty starter problem to the list. It's the root of the branch tree. */
     liste.push_front(Problem(n));
-    minimalAssignment = new int[n]{};
 
+    this->minimalAssignment = new int[n]{-1};
     /*
         While the list contains problems:
         1. Go through each problem
@@ -81,11 +88,13 @@ int* BranchAndBound::assignment(int n, int **kosten) {
         Problem problem = minProblem();
         liste.pop_front();
 
-        if(problem.l<u) {
-            /* Get a list containing all permutations of the problem. */
+        if(problem.l < u) {
+            /* Get a list containing all permutations of the problem and determine its length */
             BBlist sub_problem_list = branch(problem);
+
             int size = sub_problem_list.size();
-            /* Calculate lower bound for each subproblem */
+
+            /* Calculate lower bound for each subproblem in the returned list */
             for(int i = 0; i < size; i++)
             {
                 Problem sub_problem = sub_problem_list.front();
@@ -119,7 +128,7 @@ BranchAndBound::BBlist BranchAndBound::branch(Problem problem)
             /* 4. Go through each row, e.g worker and assign a job */
             for(int agent = 0; agent < number_of_workers; agent++)
             {
-                problem.assignment[job] = agent; //agent statt matrix[agent][job]
+                problem.assignment[job] = agent;
 
                 /* 5. Push problem variation to BBlist */
                 Problem neuesProblem = Problem(n);
@@ -190,11 +199,14 @@ void BranchAndBound::bound(Problem sub_problem)
         For each unassigned job, find the minumum job cost and add it to the LB.
         1. Allocate new array with as many slots as workers/jobs.
         2. Take cost value on position j from each row of the cost matrix. If agent is already assigned, set value to 2147483647 (maximal int value, this agent can only do one task)
+        TODO: Remove 209-215. Cost can be calculated with the already assigned jobs
     */
     for(int j = allocations; j < n; j++)
     {
         int *array = new int[n];
-        for(int i = 0; i < n; i++) {
+
+        for(int i = 0; i < n; i++)
+        {
             array[i] = matrix[i][j];
 
             for(int x = 0; x < allocations; x++)

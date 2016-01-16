@@ -23,7 +23,7 @@ int main() {
         cout << "Task " << i+1 << '\t';
     }
     for(int j = 0; j < 3; j++) {
-        cout << '\n' << "Agent " << j+1 << '\t' << '\t';
+        cout << '\n' << "Agent " << j << '\t' << '\t';
         for(int k = 0; k < 3; k++) {
             cout << matrix[j][k] << '\t';
         }
@@ -40,7 +40,7 @@ int main() {
         summe += matrix[assignment[i]][i];
     }
 
-    cout << '\n' << '\n' << "Minimale Kosten: " << summe << endl;
+    cout << '\n' << '\n' << "Minimale Kosten: " << summe << '\n' << endl;
 
     //Beispiel 2
 
@@ -71,7 +71,7 @@ int main() {
         cout << "Task " << i+1 << '\t';
     }
     for(int j = 0; j < 4; j++) {
-        cout << '\n' << "Agent " << j+1 << '\t' << '\t';
+        cout << '\n' << "Agent " << j << '\t' << '\t';
         for(int k = 0; k < 4; k++) {
             cout << matrix[j][k] << '\t';
         }
@@ -88,7 +88,7 @@ int main() {
         summe += matrix[assignment[i]][i];
     }
 
-    cout << '\n' << '\n' << "Minimale Kosten: " << summe << endl;
+    cout << '\n' << '\n' << "Minimale Kosten: " << summe << '\n' << endl;
 
     //Beispiel 3
 
@@ -131,7 +131,7 @@ int main() {
         cout << "Task " << i+1 << '\t';
     }
     for(int j = 0; j < 5; j++) {
-        cout << '\n' << "Agent " << j+1 << '\t' << '\t';
+        cout << '\n' << "Agent " << j << '\t' << '\t';
         for(int k = 0; k < 5; k++) {
             cout << matrix[j][k] << '\t';
         }
@@ -149,95 +149,4 @@ int main() {
     }
 
     cout << '\n' << '\n' << "Minimale Kosten: " << summe << endl;
-
-    //Test: Bound-Methode
-    /*
-    int** matrix = new int*[3];
-    for(int i = 0; i < 3; ++i)
-        matrix[i] = new int[3];
-
-    matrix[0][0]=5;
-    matrix[0][1]=7;
-    matrix[0][2]=3;
-    matrix[1][0]=3;
-    matrix[1][1]=1;
-    matrix[1][2]=6;
-    matrix[2][0]=4;
-    matrix[2][1]=5;
-    matrix[2][2]=9;
-
-    int n = 3;
-    int u = 2147483647;
-
-    struct Problem{
-        int l; //lower bound
-        int * assignment; //Assignment, dh welche Person welchen Job macht, wird hier reingeschrieben
-        int count; //zaehlt wie viele Aufgaben schon vergeben wurden
-        Problem(int n) : l{0}, assignment{new int[n]{}}, count{0} {}
-        ~Problem() {delete[] assignment;}
-    };
-
-    typedef std::list<Problem> BBlist;
-    BBlist liste; //Liste, die die Probleme enthaelt
-    Problem teilproblem = Problem(3);
-    teilproblem.assignment[0]=1;
-    teilproblem.assignment[1]=2;
-    teilproblem.count=2;
-    int *minimalAssignment = new int[3]{};
-
-        cout << "@bound" << endl;
-        //lower bound berechnen
-        int lowerBound = 0;
-        int * currentAssignment = new int[n] {};
-        for(int i = 0; i < teilproblem.count; i++) { //bereits festgelegte Agenten
-            lowerBound += matrix[teilproblem.assignment[i]][i];   //teilproblem.assignment[i]*(i+1)]; //teilproblem.assignment[i-1]
-            currentAssignment[i] = teilproblem.assignment[i];
-        }
-        for(int j = teilproblem.count; j < n; j++) { //noch nicht festgelegt --> minimum
-            int *array = new int[n];
-            for(int i = 0; i < n; i++) { //i = Spalte
-                array[i] = matrix[i][j];
-                for(int x = 0; x < teilproblem.count; x++) if(currentAssignment[x]==i) array[i]=2147483647;
-            }
-
-            // Spalte j durchlaufen und Minimum suchen
-            int agentMin = 0;
-            for(int k = 1; k<n; k++) {
-                if(array[k]<array[agentMin]) agentMin=k;
-            }
-            lowerBound +=array[agentMin];
-            currentAssignment[j]=agentMin;
-        }
-
-        //pruefen ob currentAssignment gueltige Loesung ist
-        bool gueltigeLoesung = true;
-        for(int l=0; l<n-1; l++) {
-            for(int m=l+1; m<n; m++) {
-                cout << "bla" << endl;
-                if(currentAssignment[l] == currentAssignment[m]) {
-                    gueltigeLoesung = false;
-                    break;
-                }
-            }
-        }
-
-        //gueltige Loesung
-        if(lowerBound < u && gueltigeLoesung) {
-            u = lowerBound;   //edit: this->
-            minimalAssignment = currentAssignment;
-        }
-
-            //keine gueltige Loesung
-        else {
-            liste.push_front(teilproblem);
-        }
-        cout << "Lower Bound: " << lowerBound << endl;
-        cout << "Upper Bound: " << u << endl;
-        cout << "Minimal Assignment: " << minimalAssignment[0] << '\t' << minimalAssignment[1] << '\t' << minimalAssignment[2];
-
-        delete[]currentAssignment;
-        */
-
-
-    return 0;
 }
