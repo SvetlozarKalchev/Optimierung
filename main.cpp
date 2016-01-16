@@ -1,9 +1,76 @@
 #include <iostream>
+#include <fstream>
+#include <string>
+
 #include "BranchAndBound.h"
 
 using namespace std;
 
+/* Reads and returns only the first line of the input file, because it contains the number of jobs*/
+int read_number_of_jobs()
+{
+    int number_of_jobs;
+    string line;
+    ifstream input_file;
+
+    input_file.open("input.txt");
+
+    while(input_file.good())
+    {
+        getline(input_file, line);
+
+        number_of_jobs = atoi(line.c_str());
+
+        return number_of_jobs;
+    }
+}
+
+/* Creates and returns an empty cost matrix with the length, specified in the input file*/
+int** create_a_matrix(int length)
+{
+    int **matrix = new int*[length];
+
+    /* Allocate each row of the matrix */
+    for(int row = 0; row < length; row++)
+    {
+        matrix[row] = new int[length];
+    }
+
+    return matrix;
+}
+
+/* Unfinished, does not work */
+void copy_input_values_to_matrix(int **matrix)
+{
+    int line_number = 0;
+    string line;
+    ifstream input_file;
+
+    input_file.open("input.txt");
+
+    // ???
+    while(input_file.good())
+    {
+        if(line_number > 0)
+        {
+            getline(input_file, line);
+
+            cout << line << endl;
+        }
+
+        line_number++;
+    }
+}
+
 int main() {
+    int number_of_jobs = read_number_of_jobs();
+    cout << "Jobs: " << number_of_jobs << endl;
+
+    int **matrix = create_a_matrix(number_of_jobs);
+
+    copy_input_values_to_matrix(matrix);
+}
+    /*
     int** matrix = new int*[3];
     for(int i = 0; i < 3; ++i)
         matrix[i] = new int[3];
@@ -150,3 +217,4 @@ int main() {
 
     cout << '\n' << '\n' << "Minimale Kosten: " << summe << endl;
 }
+*/
