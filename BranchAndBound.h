@@ -15,13 +15,17 @@ private:
         int n;
 
         /* Constructors and destructor */
-        Problem(int n) : l{0}, assignment{new int[n]{}}, count{0}, n{n} {}
+        Problem(int n) : l{0}, count{0}, n{n} {
+            assignment = new int[n]{};
+        }
 
         /* When constructing a new branch, accept a root problem as a constructor and copy all its variables to the new problem */
-        Problem(const Problem& p) : l{p.l}, count{p.count}, assignment{new int[n]} {
-            for(int i = 0; i < p.count; i++) {
+        Problem(const Problem& p) : l{p.l}, count{p.count}, n{p.n} {
+            assignment = new int[p.n]{};
+            for(int i = 0; i < count; i++) {
                 assignment[i] = p.assignment[i];
-            }; }
+            };
+        }
 
         ~Problem() {delete[] assignment;}
 
@@ -74,7 +78,7 @@ int* BranchAndBound::assignment(int n, int **kosten) {
     /* Add an empty starter problem to the list. It's the root of the branch tree. */
     liste.push_front(Problem(n));
 
-    this->minimalAssignment = new int[n]{-1};
+    this->minimalAssignment = new int[n]{};
     /*
         While the list contains problems:
         1. Go through each problem
