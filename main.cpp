@@ -1,19 +1,26 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #include "BranchAndBound.h"
 
 using namespace std;
 
 /* Reads and returns only the first line of the input file, because it contains the number of jobs*/
-int read_number_of_jobs()
+int read_number_of_jobs(string file_name)
 {
     int number_of_jobs;
     string line;
     ifstream input_file;
 
-    input_file.open("input.txt");
+    input_file.open(file_name);
+
+    if(!input_file)
+    {
+        cout << "Cannot open input file when reading # of jobs" << endl;
+        return 1;
+    }
 
     while(input_file.good())
     {
@@ -36,39 +43,125 @@ int** create_a_matrix(int length)
         matrix[row] = new int[length];
     }
 
+    /* Fill the matrix with 0s */
+    for(int row = 0; row < length; row++)
+    {
+        for(int col = 0; col < length; col++)
+        {
+            matrix[row][col] = 0;
+        }
+    }
+
     return matrix;
 }
 
-/* Unfinished, does not work */
-void copy_input_values_to_matrix(int **matrix)
+/* Reads the job costs from the input file and copies the values in a matrix */
+void copy_input_values_to_matrix(string file_name, int **matrix)
 {
     int line_number = 0;
+    int matrix_row = 0;
+    int line_length = 0;
+    int number_of_jobs = 0;
+    char symbol;
     string line;
     ifstream input_file;
 
-    input_file.open("input.txt");
+    input_file.open(file_name);
 
-    // ???
+    if(!input_file)
+    {
+        cout << "Cannot open input file when copying cost values to matrix" << endl;
+        return;
+    }
+
     while(input_file.good())
     {
-        if(line_number > 0)
-        {
-            getline(input_file, line);
+        getline(input_file, line);
 
-            cout << line << endl;
+        if(line_number == 0)
+        {
+            number_of_jobs = line[0] - '0';
+        }
+
+        /* Cache line.length() so it's not evaluated on every loop iteration */
+        line_length = line.length();
+
+        /*
+            First line contains # of jobs, so skip it
+            2nd condition is present, because for some reason the file always has an extra line. ???
+        */
+        if(line_number > 0 && line_number <= number_of_jobs)
+        {
+            /* Copy values to matrix. position+=2 to skip empty spaces between values */
+            for(int column = 0, position = 0; column < number_of_jobs; column++, position+=2)
+            {
+                /* Substracting char '0' from a string turns it into an integer */
+                matrix[matrix_row][column] = line[position] - '0';
+
+            }
+
+            matrix_row++;
         }
 
         line_number++;
     }
 }
 
+/* Accepts the cost matrix and runs the branch & bound algorithm on it */
+void run_branch_and_bound(BranchAndBound *bb, int number_of_jobs, int **matrix)
+{
+    int *optimal_assignment = bb->assignment(number_of_jobs, matrix);
+
+    cout << '\n' << '\n' << "Optimal assignment: " << endl;
+
+    for(int i = 0; i < number_of_jobs; i++)
+    {
+        cout << optimal_assignment[i] << '\t';
+    }
+
+    int cost_sum = 0;
+
+    for(int i = 0; i < number_of_jobs; i++)
+    {
+        cost_sum += matrix[optimal_assignment[i]][i];
+    }
+
+    cout << '\n' << '\n' << "Minimale Kosten: " << cost_sum << '\n' << endl;
+}
 int main() {
-    int number_of_jobs = read_number_of_jobs();
-    cout << "Jobs: " << number_of_jobs << endl;
+    vector<string> input_data = {"9-jobs.txt"};//, "5-jobs.txt", "9-jobs.txt"};//, "10-jobs.txt"};
 
-    int **matrix = create_a_matrix(number_of_jobs);
+    int input_data_length = input_data.size();
 
-    copy_input_values_to_matrix(matrix);
+    /* Run branch&bound for each input file */
+    for(int job = 0; job < input_data_length; job++)
+    {
+        BranchAndBound *bb = new BranchAndBound();
+        int **matrix;
+
+        int number_of_jobs = read_number_of_jobs(input_data[job]);
+
+        cout << "Jobs: " << number_of_jobs << endl;
+
+        matrix = create_a_matrix(number_of_jobs);
+
+        copy_input_values_to_matrix(input_data[job], matrix);
+
+        for(int row = 0; row < number_of_jobs; row++)
+        {
+            for(int col = 0; col < number_of_jobs; col++)
+            {
+                cout << matrix[row][col] << ' ';
+            }
+
+            cout << endl;
+        }
+
+        run_branch_and_bound(bb, number_of_jobs, matrix);
+//        delete bb;
+//        delete[] matrix;
+    }
+
 }
     /*
     int** matrix = new int*[3];

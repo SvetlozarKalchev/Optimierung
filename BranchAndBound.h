@@ -129,7 +129,7 @@ BranchAndBound::BBlist BranchAndBound::branch(Problem problem)
             for(int agent = 0; agent < number_of_workers; agent++)
             {
                 problem.assignment[job] = agent;
-
+                cout << "created a branch" << endl;
                 /* 5. Push problem variation to BBlist */
                 Problem neuesProblem = Problem(n);
                 neuesProblem = problem;
@@ -247,7 +247,7 @@ void BranchAndBound::bound(Problem sub_problem)
     }
         /*
             Solution is not valid: Add Problem to list.
-        * */
+        */
     else if(!valid_solution) {
         liste.push_front(sub_problem);
     }
