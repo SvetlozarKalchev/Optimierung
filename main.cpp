@@ -133,11 +133,15 @@ void run_branch_and_bound(BranchAndBound *bb, int number_of_jobs, int **matrix)
     cout << '\n' << '\n' << "Minimale Kosten: " << cost_sum << '\n' << endl;
 }
 
-bool match(const std::string& s, const char * c) {
+bool match(const string& s, const char * c) {
     return c && s.length() > 0 && s.compare(0, s.length(), c, s.length()) == 0;
 }
 
 int main() {
+    cout << "Welcome!" << endl;
+    cout << "create <n>" << '\t' << "creates new testfile with n jobs / agents and runs branch and bound algorithm" << endl;
+    cout << "read <path>" << '\t' << "reads file from path and runs branch and bound algorithm" << endl;
+    cout << "exit" << '\t' << '\t' << "exit program" << endl;
     while (true) {
         cout.setf(ios_base::boolalpha);
 
@@ -241,34 +245,34 @@ int main() {
 
     int input_data_length = input_data.size(); */
 
-    /* Run branch&bound for each input file */
-    /*for(int job = 0; job < input_data_length; job++)
+/* Run branch&bound for each input file */
+/*for(int job = 0; job < input_data_length; job++)
+{
+    BranchAndBound *bb = new BranchAndBound();
+    int **matrix;
+
+    int number_of_jobs = read_number_of_jobs(input_data[job]);
+
+    cout << "Jobs: " << number_of_jobs << endl;
+
+    matrix = create_a_matrix(number_of_jobs);
+
+    copy_input_values_to_matrix(input_data[job], matrix);
+
+    for(int row = 0; row < number_of_jobs; row++)
     {
-        BranchAndBound *bb = new BranchAndBound();
-        int **matrix;
-
-        int number_of_jobs = read_number_of_jobs(input_data[job]);
-
-        cout << "Jobs: " << number_of_jobs << endl;
-
-        matrix = create_a_matrix(number_of_jobs);
-
-        copy_input_values_to_matrix(input_data[job], matrix);
-
-        for(int row = 0; row < number_of_jobs; row++)
+        for(int col = 0; col < number_of_jobs; col++)
         {
-            for(int col = 0; col < number_of_jobs; col++)
-            {
-                cout << matrix[row][col] << ' ';
-            }
-
-            cout << endl;
+            cout << matrix[row][col] << ' ';
         }
 
-        run_branch_and_bound(bb, number_of_jobs, matrix);
+        cout << endl;
+    }
+
+    run_branch_and_bound(bb, number_of_jobs, matrix);
 //        delete bb;
 //        delete[] matrix;
-    }*/
+}*/
 
 
 /*
