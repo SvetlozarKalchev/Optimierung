@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <stdlib.h>
+#include <sstream>
+#include <time.h>
 
 
 #include "BranchAndBound.h"
@@ -130,13 +132,117 @@ void run_branch_and_bound(BranchAndBound *bb, int number_of_jobs, int **matrix)
 
     cout << '\n' << '\n' << "Minimale Kosten: " << cost_sum << '\n' << endl;
 }
-int main() {
-    vector<string> input_data = {"5-jobs.txt"};//, "5-jobs.txt", "9-jobs.txt"};//, "10-jobs.txt"};
 
-    int input_data_length = input_data.size();
+bool match(const std::string& s, const char * c) {
+    return c && s.length() > 0 && s.compare(0, s.length(), c, s.length()) == 0;
+}
+
+int main() {
+    while (true) {
+        cout.setf(ios_base::boolalpha);
+
+        cout << endl << "> ";
+
+        string cmdline;
+        if (!getline(cin, cmdline)) break;
+
+        istringstream cmdstream(cmdline);
+        string cmd;
+
+        cmdstream >> cmd;
+        try {
+            if (cmd.length() == 0) {
+            } else if (match(cmd, "exit")) {
+                break;
+            }
+            else if (match(cmd, "create")) {
+
+                int n = 0;
+                cmdstream >> n;
+                string fileName;
+                ostringstream ss;
+                ss << n;
+
+                fileName.append(ss.str()).append("jobs.txt");
+
+                //string fileName = n + "jobs.txt";
+
+                ofstream out;
+                out.open(fileName);
+                out << n << '\n';
+                srand(time(0));
+                for(int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        out << rand() % 9 + 1 << '\t';
+                    }
+                    out << '\n';
+                }
+                out.close();
+                cout << "file created" << endl;
+
+                BranchAndBound *bb = new BranchAndBound();
+                int **matrix;
+
+                int number_of_jobs = read_number_of_jobs(fileName);
+
+                cout << "Jobs: " << number_of_jobs << endl;
+
+                matrix = create_a_matrix(number_of_jobs);
+
+                copy_input_values_to_matrix(fileName, matrix);
+
+                for (int row = 0; row < number_of_jobs; row++) {
+                    for (int col = 0; col < number_of_jobs; col++) {
+                        cout << matrix[row][col] << ' ';
+                    }
+
+                    cout << endl;
+                }
+
+                run_branch_and_bound(bb, number_of_jobs, matrix);
+
+            }
+            else if (match(cmd, "read")) {
+                string path;
+                while (cmdstream >> path) {
+                    BranchAndBound *bb = new BranchAndBound();
+                    int **matrix;
+
+                    int number_of_jobs = read_number_of_jobs(path);
+
+                    cout << "Jobs: " << number_of_jobs << endl;
+
+                    matrix = create_a_matrix(number_of_jobs);
+
+                    copy_input_values_to_matrix(path, matrix);
+
+                    for (int row = 0; row < number_of_jobs; row++) {
+                        for (int col = 0; col < number_of_jobs; col++) {
+                            cout << matrix[row][col] << ' ';
+                        }
+
+                        cout << endl;
+                    }
+
+                    run_branch_and_bound(bb, number_of_jobs, matrix);
+                }
+            }
+        }
+        catch (...) {
+            cout << "Exception occurred!" << endl;
+        }
+
+
+    }
+}
+
+/*
+    vector<string> input_data = {"C:\\Users\\Sabrina1\\ClionProjects\\BranchAndBound\\5-jobs.txt"};//, "5-jobs.txt", "9-jobs.txt"};//, "10-jobs.txt"};
+
+    int input_data_length = input_data.size(); */
 
     /* Run branch&bound for each input file */
-    for(int job = 0; job < input_data_length; job++)
+    /*for(int job = 0; job < input_data_length; job++)
     {
         BranchAndBound *bb = new BranchAndBound();
         int **matrix;
@@ -162,9 +268,9 @@ int main() {
         run_branch_and_bound(bb, number_of_jobs, matrix);
 //        delete bb;
 //        delete[] matrix;
-    }
+    }*/
 
-}
+
 /*
 int** matrix = new int*[3];
 for(int i = 0; i < 3; ++i)
