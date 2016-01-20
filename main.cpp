@@ -144,33 +144,44 @@ int main() {
     cout << "exit" << '\t' << '\t' << "exit program" << endl;
     while (true) {
         cout.setf(ios_base::boolalpha);
-
         cout << endl << "> ";
 
+        /** The string cmdline receives the input from the commandline via istringstream*/
         string cmdline;
+
         if (!getline(cin, cmdline)) break;
 
         istringstream cmdstream(cmdline);
-        string cmd;
+        /** The string command is used to discriminate between the different functions:
+         * "exit".....quit programme
+         * "create"...create a new test file
+         * "read".....read a specified file*/
+        string command;
 
-        cmdstream >> cmd;
+        cmdstream >> command;
         try {
-            if (cmd.length() == 0) {
-            } else if (match(cmd, "exit")) {
+            if (command.length() == 0) {
+            }
+            else if (match(command, "exit")) {
                 break;
             }
-            else if (match(cmd, "create")) {
-
+            else if (match(command, "create")) {
+                /** n = number of tasks = number of agents; by using ostringstream, int-value of n can be retrieved*/
                 int n = 0;
                 cmdstream >> n;
-                string fileName;
                 ostringstream ss;
                 ss << n;
 
+                /** contains the fileName of the new file: <n>jobs.txt*/
+                string fileName;
                 fileName.append(ss.str()).append("jobs.txt");
 
-                //string fileName = n + "jobs.txt";
-
+                /**
+                 * 1. Open file with the specified path (new file is created if it does not exist yet)
+                 * 2. Write n into file
+                 * 3. Write n x n matrix with random values into file
+                 * 4. Close file
+                 */
                 ofstream out;
                 out.open(fileName);
                 out << n << '\n';
@@ -184,6 +195,7 @@ int main() {
                 out.close();
                 cout << "file created" << endl;
 
+                /** Branch and bound algorithm with the data of the created file*/
                 BranchAndBound *bb = new BranchAndBound();
                 int **matrix;
 
@@ -206,7 +218,7 @@ int main() {
                 run_branch_and_bound(bb, number_of_jobs, matrix);
 
             }
-            else if (match(cmd, "read")) {
+            else if (match(command, "read")) {
                 string path;
                 while (cmdstream >> path) {
                     BranchAndBound *bb = new BranchAndBound();

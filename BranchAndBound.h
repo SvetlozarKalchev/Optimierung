@@ -44,6 +44,11 @@ private:
             count = p.count;
             return *this;
         }
+
+        bool operator < (const Problem& p)
+        {
+            return l < p.l;
+        }
     };
 
     typedef list<Problem> BBlist;
@@ -64,6 +69,7 @@ public:
     void bound(Problem teilproblem);
     Problem minProblem();
     BranchAndBound::Problem* setProblem(int n);
+    void cleanUp();
 
 };
 
@@ -248,6 +254,7 @@ void BranchAndBound::bound(Problem sub_problem)
     if(lowerBound < u && valid_solution) {
         this->u = lowerBound;
         minimalAssignment = currentAssignment;
+        cleanUp();
     }
         /*
             Solution is not valid: Add Problem to list.
@@ -261,13 +268,29 @@ void BranchAndBound::bound(Problem sub_problem)
     Method finds Problem with minimal lowerbound in the list of problems.
  * */
 BranchAndBound::Problem BranchAndBound::minProblem() {
-    //liste->sort();
+    /**
+     * 1. List of problems is sorted by the lowerbound of the problems
+     * 2. First item of the list (=problem with the lowest lowerbound) is returned
+     * */
+    liste.sort();
     return liste.front();
 }
 
-BranchAndBound::Problem* BranchAndBound::setProblem(int n) {
-    Problem* neuesProblem = new Problem(n);
-    return neuesProblem;
+/**
+ * This method removes problems with a higher lowerbound than the upperbound from the list.
+ * */
+void BranchAndBound::cleanUp() {
+    /**
+     * 1. List of problems is sorted by the lowerbound of the problems.
+     * 2. If the list is not empty and the lowerbound of the last problem in the list is higher than the upperbound, this problem is removed from the list.
+     *    This step is repeated until this condition is not met anymore.*/
+    liste.sort();
+    bool x = true;
+    while (x) {
+        if(!liste.empty() && liste.back().l>=u) liste.pop_back();
+        else x = false;
+    }
+
 }
 
 #endif //BRANCHANDBOUND_BRANCHANDBOUND_H
