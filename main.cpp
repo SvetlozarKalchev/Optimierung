@@ -118,9 +118,33 @@ void run_branch_and_bound(BranchAndBound *bb, int number_of_jobs, int **matrix)
 
     cout << '\n' << '\n' << "Optimal assignment: " << endl;
 
+    /*
     for(int i = 0; i < number_of_jobs; i++)
     {
-        cout << optimal_assignment[i] << '\t';
+        cout << optimal_assignment[i]+1 << '\t';
+    }
+     */
+
+    /** Matrix form of optimal assignment:
+     * 0: task is not assigned to agent
+     * 1: task is assigned to agent
+     * */
+    cout << '\n' << '\t' << '\t';
+    for(int i = 0; i < number_of_jobs; i++)
+    {
+        cout << "Task " << i+1 << '\t';
+    }
+    cout << '\n' << '\n' ;
+
+    for(int row = 0; row < number_of_jobs; row++)
+    {
+        cout << "Agent " << row+1 << '\t' << '\t';
+        for( int col = 0; col < number_of_jobs; col++)
+        {
+            if(optimal_assignment[col] == row) cout << "1" << '\t';
+            else cout << "0" << '\t';
+        }
+        cout << '\n' << '\n';
     }
 
     int cost_sum = 0;
@@ -139,9 +163,9 @@ bool match(const string& s, const char * c) {
 
 int main() {
     cout << "Welcome!" << endl;
-    cout << "create <n>" << '\t' << "creates new testfile with n jobs / agents and runs branch and bound algorithm" << endl;
-    cout << "read <path>" << '\t' << "reads file from path and runs branch and bound algorithm" << endl;
-    cout << "exit" << '\t' << '\t' << "exit program" << endl;
+    cout << "create <n>........creates new testfile with n jobs / agents and runs branch and bound algorithm" << endl;
+    cout << "read <path>.......reads file from path and runs branch and bound algorithm" << endl;
+    cout << "exit..............exit program" << endl;
     while (true) {
         cout.setf(ios_base::boolalpha);
         cout << endl << "> ";
@@ -193,7 +217,7 @@ int main() {
                     out << '\n';
                 }
                 out.close();
-                cout << "file created" << endl;
+                cout << "file " << fileName << " created" << endl;
 
                 /** Branch and bound algorithm with the data of the created file*/
                 BranchAndBound *bb = new BranchAndBound();
@@ -207,9 +231,18 @@ int main() {
 
                 copy_input_values_to_matrix(fileName, matrix);
 
+                /** Column titles */
+                cout << '\t' << '\t';
+                for(int column = 0; column < number_of_jobs; column++) {
+                    cout << "Task " << column+1 << '\t';
+                }
+                cout << '\n' ;
+
+                /** Fill matrix*/
                 for (int row = 0; row < number_of_jobs; row++) {
+                    cout << '\n' << "Agent " << row+1 << '\t' << '\t';
                     for (int col = 0; col < number_of_jobs; col++) {
-                        cout << matrix[row][col] << ' ';
+                        cout << matrix[row][col] << '\t';
                     }
 
                     cout << endl;
@@ -232,9 +265,18 @@ int main() {
 
                     copy_input_values_to_matrix(path, matrix);
 
+                    /** Column titles */
+                    cout << '\t' << '\t';
+                    for(int column = 0; column < number_of_jobs; column++) {
+                        cout << "Task " << column+1 << '\t';
+                    }
+                    cout << '\n' ;
+
+                    /** Fill matrix*/
                     for (int row = 0; row < number_of_jobs; row++) {
+                        cout << '\n' << "Agent " << row+1 << '\t' << '\t';
                         for (int col = 0; col < number_of_jobs; col++) {
-                            cout << matrix[row][col] << ' ';
+                            cout << matrix[row][col] << '\t';
                         }
 
                         cout << endl;
@@ -242,6 +284,14 @@ int main() {
 
                     run_branch_and_bound(bb, number_of_jobs, matrix);
                 }
+            }
+            else
+            {
+                cout << "Input was not correct, please try again:" << '\n' << endl;
+                cout << "Welcome!" << endl;
+                cout << "create <n>........creates new testfile with n jobs / agents and runs branch and bound algorithm" << endl;
+                cout << "read <path>.......reads file from path and runs branch and bound algorithm" << endl;
+                cout << "exit..............exit program" << endl;
             }
         }
         catch (...) {
