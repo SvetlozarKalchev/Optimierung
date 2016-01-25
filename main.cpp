@@ -142,8 +142,8 @@ void run_branch_and_bound(BranchAndBound *bb, int number_of_jobs, int **matrix)
      */
 
     /** Matrix form of optimal assignment:
-     * 0: task is not assigned to agent
-     * 1: task is assigned to agent
+     * x: task is not assigned to agent
+     * |: task is assigned to agent
      * */
     cout << '\n' << '\t' << '\t';
     for(int i = 0; i < number_of_jobs; i++)
