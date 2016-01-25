@@ -85,6 +85,7 @@ int* BranchAndBound::assignment(int n, int **kosten) {
     liste.push_front(Problem(n));
 
     this->minimalAssignment = new int[n]{};
+
     /*
         While the list contains problems:
         1. Go through each problem

@@ -95,7 +95,7 @@ void copy_input_values_to_matrix(string file_name, int **matrix)
         /* The first line is the number of rows and columns */
         if(line_number == 0)
         {
-            number_of_jobs = line[0] - '0';
+            number_of_jobs = atoi(line.c_str());
         }
         /* Other lines contain the matrix values we need to read */
         else if(line_number > 0 && line_number <= number_of_jobs)
@@ -132,13 +132,6 @@ void run_branch_and_bound(BranchAndBound *bb, int number_of_jobs, int **matrix)
     int *optimal_assignment = bb->assignment(number_of_jobs, matrix);
 
     cout << '\n' << '\n' << "Optimal assignment: " << endl;
-
-    /*
-    for(int i = 0; i < number_of_jobs; i++)
-    {
-        cout << optimal_assignment[i]+1 << '\t';
-    }
-     */
 
     /** Matrix form of optimal assignment:
      * x: task is not assigned to agent
