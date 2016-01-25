@@ -157,8 +157,14 @@ void run_branch_and_bound(BranchAndBound *bb, int number_of_jobs, int **matrix)
         cout << "Agent " << row+1 << '\t' << '\t';
         for( int col = 0; col < number_of_jobs; col++)
         {
-            if(optimal_assignment[col] == row) cout << "1" << '\t';
-            else cout << "0" << '\t';
+            if(optimal_assignment[col] == row)
+            {
+                cout << "|" << '\t';
+            }
+            else
+            {
+                cout << "x" << '\t';
+            }
         }
         cout << '\n' << '\n';
     }
