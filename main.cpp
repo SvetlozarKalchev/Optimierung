@@ -113,9 +113,8 @@ void copy_input_values_to_matrix(string file_name, int **matrix)
             for(int col = 0; col < number_of_jobs; col++)
             {
                 matrix[matrix_row][col] = matrix_line[col];
-                cout << matrix_line[col];
             }
-            cout << endl;
+
             matrix_row++;
 
             /* Stream and temp array need to be flushed to accept new values */
