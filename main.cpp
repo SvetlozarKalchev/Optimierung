@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <sstream>
 #include <time.h>
-
+#include <istream>
+#include <stdexcept>
 
 #include "BranchAndBound.h"
 
@@ -63,48 +64,63 @@ int** create_a_matrix(int length)
 void copy_input_values_to_matrix(string file_name, int **matrix)
 {
     int line_number = 0;
-    int matrix_row = 0;
-    int line_length = 0;
     int number_of_jobs = 0;
-    char symbol;
+    int matrix_row = 0;
+    /* Split input on whitespace*/
+    char delim = ' ';
+    string temp;
     string line;
-    ifstream input_file;
 
-    input_file.open(file_name);
+    ifstream file;
 
-    if(!input_file)
+    /* Temporary array for the values in each row */
+    vector<int> matrix_line;
+
+    /* Put string here in order to filter it */
+    stringstream line_as_stream;
+
+    file.open(file_name);
+
+    /* Throw error if file can't be found */
+    if(!file)
     {
-        cout << "Cannot open input file when copying cost values to matrix" << endl;
-        return;
+        throw invalid_argument("Input file not found");
     }
 
-    while(input_file.good())
+    /* Go over each line of the file */
+    while(file.good())
     {
-        getline(input_file, line);
+        getline(file, line);
 
+        /* The first line is the number of rows and columns */
         if(line_number == 0)
         {
             number_of_jobs = line[0] - '0';
         }
-
-        /* Cache line.length() so it's not evaluated on every loop iteration */
-        line_length = line.length();
-
-        /*
-            First line contains # of jobs, so skip it
-            2nd condition is present, because for some reason the file always has an extra line. ???
-        */
-        if(line_number > 0 && line_number <= number_of_jobs)
+        /* Other lines contain the matrix values we need to read */
+        else if(line_number > 0 && line_number <= number_of_jobs)
         {
-            /* Copy values to matrix. position+=2 to skip empty spaces between values */
-            for(int column = 0, position = 0; column < number_of_jobs; column++, position+=2)
-            {
-                /* Substracting char '0' from a string turns it into an integer */
-                matrix[matrix_row][column] = line[position] - '0';
+            /* Put the read line in a string stream for easy filtering */
+            line_as_stream << line;
 
+            /* Go over each value in the read line and save it to a temp array */
+            while(getline(line_as_stream, temp, delim))
+            {
+                matrix_line.push_back(atoi(temp.c_str()));
             }
 
+            /* Copy the separated values to the matrix */
+            for(int col = 0; col < number_of_jobs; col++)
+            {
+                matrix[matrix_row][col] = matrix_line[col];
+                cout << matrix_line[col];
+            }
+            cout << endl;
             matrix_row++;
+
+            /* Stream and temp array need to be flushed to accept new values */
+            line_as_stream.clear();
+            matrix_line.clear();
         }
 
         line_number++;
@@ -166,6 +182,7 @@ int main() {
     cout << "create <n>........creates new testfile with n jobs / agents and runs branch and bound algorithm" << endl;
     cout << "read <path>.......reads file from path and runs branch and bound algorithm" << endl;
     cout << "exit..............exit program" << endl;
+
     while (true) {
         cout.setf(ios_base::boolalpha);
         cout << endl << "> ";
