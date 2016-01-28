@@ -210,7 +210,6 @@ void BranchAndBound::bound(Problem sub_problem)
         For each unassigned job, find the minumum job cost and add it to the LB.
         1. Allocate new array with as many slots as workers/jobs.
         2. Take cost value on position j from each row of the cost matrix. If agent is already assigned, set value to 2147483647 (maximal int value, this agent can only do one task)
-        TODO: Remove 209-215. Cost can be calculated with the already assigned jobs
     */
     for(int j = allocations; j < n; j++)
     {
